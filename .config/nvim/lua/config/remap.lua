@@ -43,4 +43,50 @@ keymap.set("n", "<leader>gb", ":Gitsigns blame<CR>")
 
 keymap.set('n', 'df', '<cmd>lua vim.diagnostic.open_float()<cr>')
 keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
-keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>') 
+keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
+
+-- Smart Search & Replace with confirm-per-change option
+vim.keymap.set({ "n", "v" }, "<leader>rif", function()
+	local mode = vim.fn.mode()
+	local word_under_cursor = vim.fn.expand("<cword>")
+
+	-- Prefill with word under cursor; allow empty input to use it
+	local search = vim.fn.input("Find (" .. word_under_cursor .. "): ")
+	if search == "" then search = word_under_cursor end
+	if search == "" then
+		print("❌ Nothing to search for.")
+		return
+	end
+
+	local replace = vim.fn.input("Replace with: ")
+
+	-- Determine scope / range
+	local range
+	if mode == "v" or mode == "V" then
+		range = "'<,'>"
+	else
+		local scope = vim.fn.input("Scope ([l]ine, [f]ile): ")
+		if scope == "l" then
+			range = "" -- :s works on current line by default
+		else
+			range = "%" -- whole file
+		end
+	end
+
+	-- Flags: g always, optional c (confirm), optional i (ignorecase)
+	local confirm = vim.fn.input("Confirm each? (y/N): ")
+	local ignore  = vim.fn.input("Ignore case? (y/N): ")
+	local flags   = "g"
+	if confirm:lower() == "y" then flags = flags .. "c" end
+	if ignore:lower() == "y" then flags = flags .. "i" end
+
+	-- Escape delimiter specials
+	search    = vim.fn.escape(search, "/\\")
+	replace   = vim.fn.escape(replace, "/\\")
+	local cmd = string.format("%ss/%s/%s/%s", range, search, replace, flags)
+
+	vim.cmd(cmd)
+
+	local where = (range == "%") and "entire file" or ((range == "'<,'>") and "selection" or "current line")
+	print("✅ Replace done in " .. where .. " with flags '" .. flags .. "'")
+end, { desc = "Search & Replace (smart, with confirm)" })
