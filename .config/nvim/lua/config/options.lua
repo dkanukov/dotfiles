@@ -27,3 +27,19 @@ opt.splitright = true
 opt.splitbelow = true
 
 opt.iskeyword:append("-")
+
+-- Force LSP to refresh diagnostics after save (helps when formatters fix errors)
+vim.api.nvim_create_autocmd("BufWritePost", {
+	callback = function()
+		vim.defer_fn(function()
+			vim.diagnostic.reset()
+			for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+				if client.supports_method("textDocument/diagnostic") then
+					vim.lsp.buf_request(0, "textDocument/diagnostic", {
+						textDocument = vim.lsp.util.make_text_document_params(),
+					})
+				end
+			end
+		end, 100)
+	end,
+})

@@ -18,7 +18,7 @@ return {
 				vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
 				vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
 				vim.keymap.set('n', 'rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-				vim.keymap.set({ 'n', 'x' }, 'fm', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+				vim.keymap.set({ 'n', 'x' }, 'fm', '<cmd>Guard fmt<cr>', opts)
 				vim.keymap.set('n', 'ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
 			end
 		})
@@ -35,9 +35,15 @@ return {
 		require("mason").setup({})
 
 		require('mason-lspconfig').setup({
-			ensure_installed = { "cssls", "css_variables", "cssmodules_ls", "eslint", "stylelint_lsp", "lua_ls",
+			ensure_installed = { "cssls", "css_variables", "cssmodules_ls", "stylelint_lsp", "lua_ls",
 				"rust_analyzer", "bashls", "typos_lsp" },
-			handlers = { default_setup }
+			handlers = {
+				default_setup,
+				-- Disable ts_ls since typescript-tools handles TypeScript
+				ts_ls = function() end,
+				-- Disable eslint LSP - Guard uses eslint_d instead
+				eslint = function() end,
+			}
 		})
 	end
 }

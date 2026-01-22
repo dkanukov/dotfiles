@@ -15,10 +15,12 @@ return {
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-cmdline",
+			"onsails/lspkind.nvim",
 		},
 		config = function()
 			local luasnip = require("luasnip")
 			local cmp = require("cmp")
+			local lspkind = require("lspkind")
 
 			luasnip.filetype_extend("typescript", { "javascript" })
 			luasnip.filetype_extend("javascript", { "typescript" })
@@ -40,7 +42,6 @@ return {
 					["<C-b>"] = cmp.mapping.scroll_docs(-4),
 					["<C-f>"] = cmp.mapping.scroll_docs(4),
 					["<C-a>"] = cmp.mapping.complete(),
-					["<C-e>"] = cmp.mapping.abort(),
 					["<CR>"] = cmp.mapping.confirm({ select = false }),
 					["<Tab>"] = cmp.mapping(function(fallback)
 						if cmp.visible() then
@@ -61,6 +62,16 @@ return {
 					{ name = "buffer" },
 					{ name = "path" },
 				}),
+				formatting = {
+					fields = { "kind", "abbr", "menu" },
+					format = function(entry, vim_item)
+						local kind = lspkind.cmp_format({ mode = "symbol_text" })(entry, vim_item)
+						local strings = vim.split(kind.kind, "%s", { trimempty = true })
+						kind.kind = " " .. (strings[1] or "") .. " "
+						kind.menu = "  " .. (strings[2] or "")
+						return kind
+					end,
+				},
 			})
 		end,
 	},
