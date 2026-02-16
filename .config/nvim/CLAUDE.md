@@ -31,21 +31,60 @@ return {
 | `<leader>ff` | Find files (Telescope) |
 | `<leader>fs` | Live grep |
 | `gd` | Go to definition |
+| `gD` | Go to declaration |
+| `gi` | Go to implementation |
+| `go` | Go to type definition |
 | `gr` | Find references |
+| `gs` | Signature help |
 | `vh` | Hover documentation |
 | `rn` | Rename symbol |
-| `fm` | Format document |
+| `fm` | Format document (Guard) |
 | `ca` | Code actions |
+| `gl` | Show diagnostic float |
+| `[d` / `]d` | Previous/next diagnostic |
 | `<leader>a` | Add to Harpoon |
 | `<C-e>` | Harpoon quick menu |
 | `<leader>gb` | Git blame |
 | `<leader>xx` | Toggle diagnostics (Trouble) |
 
+### TypeScript-specific
+
+| Keymap | Action |
+|--------|--------|
+| `<leader>oi` | Organize imports |
+| `<leader>ru` | Remove unused |
+| `<leader>ai` | Add missing imports |
+| `<leader>fa` | Fix all |
+| `<leader>rf` | Rename file |
+
 ## LSP Setup
 
-Mason auto-installs servers defined in `lua/plugins/lsp-mason.lua`. Currently: cssls, eslint, stylelint_lsp, lua_ls, rust_analyzer, bashls, typos_lsp.
+Mason auto-installs servers defined in `lua/plugins/lsp-mason.lua`:
+- **CSS:** cssls, css_variables, cssmodules_ls, stylelint_lsp
+- **Lua:** lua_ls
+- **Rust:** rust_analyzer
+- **Shell:** bashls
+- **TypeScript/JavaScript:** typescript-tools.nvim (ts_ls disabled)
+- **JSON:** jsonls (with schemastore.nvim)
+- **YAML:** yamlls (with schemastore.nvim)
+- **HTML:** html
+- **Spelling:** typos_lsp
 
 LSP keymaps are set on `LspAttach` event in the same file.
+
+## Formatting
+
+Formatting is handled by `guard.nvim` (`lua/plugins/guard.lua`) with format-on-save enabled.
+
+| Filetype | Formatter |
+|----------|-----------|
+| Lua | stylua |
+| JS/TS/JSX/TSX | eslint_d |
+| CSS/SCSS | prettier |
+| Rust | rustfmt |
+| Go | go.nvim (goimports) |
+| Shell | shfmt |
+| JSON/YAML/Markdown | prettier |
 
 ## Adding Plugins
 

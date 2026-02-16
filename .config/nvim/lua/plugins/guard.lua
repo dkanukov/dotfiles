@@ -9,6 +9,7 @@ return {
 		vim.g.guard_config = {
 			fmt_on_save = true,
 			lsp_as_default_formatter = true,
+			save_on_fmt = false,
 		}
 
 		local ft = require("guard.filetype")
@@ -24,10 +25,10 @@ return {
 			stdin = true,
 		})
 
-		-- CSS/SCSS: stylelint --fix (respects project config)
+		-- CSS/SCSS: prettier (stylelint --fix doesn't support stdout)
 		ft("css,scss"):fmt({
-			cmd = "stylelint",
-			args = { "--fix", "--stdin", "--stdin-filename" },
+			cmd = "prettier",
+			args = { "--stdin-filepath" },
 			fname = true,
 			stdin = true,
 		})
@@ -35,13 +36,12 @@ return {
 		-- Rust: rustfmt
 		ft("rust"):fmt("rustfmt")
 
-		-- Go: gofmt + goimports
-		ft("go"):fmt("gofmt"):append("goimports")
+		-- Go: handled by go.nvim (lua/plugins/go.lua)
 
 		-- Shell: shfmt
 		ft("sh,bash"):fmt("shfmt")
 
-		-- JSON/YAML/Markdown: prettier (non-daemon, always reads project config)
+		-- JSON/YAML/Markdown: prettier
 		ft("json,yaml,markdown"):fmt({
 			cmd = "prettier",
 			args = { "--stdin-filepath" },

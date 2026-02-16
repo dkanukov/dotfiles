@@ -10,6 +10,11 @@ return {
 		{ "<leader>rf", "<cmd>TSToolsRenameFile<cr>", desc = "Rename file" },
 	},
 	opts = {
+		on_attach = function(client)
+			-- Disable tsserver formatting, let eslint_d handle it via Guard
+			client.server_capabilities.documentFormattingProvider = false
+			client.server_capabilities.documentRangeFormattingProvider = false
+		end,
 		settings = {
 			separate_diagnostic_server = true,
 			publish_diagnostic_on = "change",

@@ -335,3 +335,22 @@ if [ "$funcstack[1]" = "_avito" ]; then
     _avito
 fi
 
+
+# opencode
+export PATH=/Users/dmkanukov/.opencode/bin:$PATH
+
+# java
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-17.jdk/Contents/Home
+export GRADLE_USER_HOME=/Users/Shared/gradle
+
+decode_base64() {
+    echo "$1" | base64 -d
+}
+
+decode_base64_ctx() {
+    echo "$1" | sed 's/_/\//g;s/$/=/;' | base64 --decode | gzip -d 2>/dev/null && echo
+} 
+
+
+alias ctxdecode='decode_base64_ctx'
+alias base64='decode_base64'
